@@ -117,6 +117,11 @@ def tune(df, regime="explicit_mnar", cfg=CFG):
                         ("clf", HistGradientBoostingClassifier(**cfg["models"]["hist_gbdt"], random_state=SEED))])
     base = cross_val_score(untuned, df[cols], y, groups=groups, cv=cv,
                            scoring=cfg["validation"]["scoring"]).mean()
+    results = (pd.DataFrame(gs.cv_results_)[["params", "mean_test_score", "std_test_score"]]
+                 .sort_values("mean_test_score", ascending=False)
+                 .reset_index(drop=True))
+    results.to_csv(OUT / "gridsearch.csv", index=False)
+
     print(f"best {gs.best_params_}")
     print(f"tuned {gs.best_score_:.4f} vs untuned {base:.4f} -> delta {gs.best_score_-base:+.4f}")
     return gs, base
