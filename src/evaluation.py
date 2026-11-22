@@ -17,10 +17,14 @@ OUT = ROOT / "outputs"; OUT.mkdir(exist_ok=True)
 
 
 def get_models(cfg=CFG):
+    """Instantiate the three candidates. Every hyperparameter except the seed
+    comes from config.yaml — do not repeat one as an explicit keyword here, or
+    the ** unpack and the keyword collide with a TypeError.
+    """
     m = cfg["models"]
     return {
         "LogisticRegression": LogisticRegression(**m["logistic_regression"], random_state=SEED),
-        "RandomForest":       RandomForestClassifier(**m["random_forest"], n_jobs=-1, random_state=SEED),
+        "RandomForest":       RandomForestClassifier(**m["random_forest"], random_state=SEED),
         "HistGBDT":           HistGradientBoostingClassifier(**m["hist_gbdt"], random_state=SEED),
     }
 
