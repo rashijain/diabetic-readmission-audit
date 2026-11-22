@@ -1,42 +1,47 @@
-# Central experiment configuration. Change parameters HERE, never inline in notebooks,
-# so every run is reproducible from a commit hash and every change is a reviewable diff.
+# Single source of truth for every experiment parameter.
+# Both the notebook and the src/ modules read this file; neither writes it.
+# Change a value here and the change appears as a reviewable diff.
 
 project:
   name: diabetic_readmission_missingness_audit
   random_state: 42
 
 data:
+  # Current UCI static path first, legacy path as fallback.
   sources:
     - https://archive.ics.uci.edu/static/public/296/diabetes+130+us+hospitals+for+years+1999+2008.zip
     - https://archive.ics.uci.edu/ml/machine-learning-databases/00296/dataset_diabetes.zip
   local_csv: data/diabetic_data.csv
   expected_shape: [101766, 50]
 
-# --- clinical parameters ---------------------------------------------------
-clinical:
   # Discharge dispositions meaning expired or discharged to hospice. These patients
   # cannot be readmitted; retaining them places unreachable outcomes in the negative class.
   expired_hospice_ids: [11, 13, 14, 19, 20, 21]
+
   # Constant 'No' across all 101,766 rows -> zero variance, no information.
   zero_variance_cols: [examide, citoglipton]
+
   # Features examined for informative missingness. 'weight' is retained deliberately as a
   # NULL CONTROL: 96.85% missing, chi-square p = 1.000. Its null result is what shows the
   # other four reflect clinical signal rather than an artefact of high missingness.
-  missingness_cols: [weight, max_glu_serum, A1Cresult, payer_code, medical_specialty]
-  target_label: "<30"            # CMS 30-day readmission window
-  intervention_threshold: 0.15   # plausible discharge-planning capacity
+  mnar_cols: [weight, max_glu_serum, A1Cresult, payer_code, medical_specialty]
 
-# --- modelling parameters --------------------------------------------------
+  # medical_specialty alone has 73 levels; rarer categories are pooled.
+  min_category_freq: 250
+
+  target_label: "<30"            # CMS 30-day readmission window
+
 validation:
   n_splits: 5
   tuning_splits: 3
-  min_category_freq: 250         # medical_specialty has 73 levels
+  calibration_test_size: 0.20
   ece_bins: 10
-  scoring: average_precision     # NOT accuracy: 11.39% positive rate
+  clinical_decision_threshold: 0.15   # plausible discharge-planning capacity
+  scoring: average_precision          # NOT accuracy: 11.39% positive rate
 
 models:
   logistic_regression: {C: 1.0, max_iter: 1000}
-  random_forest: {n_estimators: 150, max_depth: 12, min_samples_leaf: 20}
+  random_forest: {n_estimators: 150, max_depth: 12, min_samples_leaf: 20, n_jobs: -1}
   hist_gbdt: {max_iter: 200, max_depth: 8, learning_rate: 0.05, min_samples_leaf: 30}
 
 tuning_grid:

@@ -95,7 +95,7 @@ def subgroup_audit(df, oof_by_regime, cfg=CFG):
     df must carry a RangeIndex (data_loader resets it) so that .loc labels from
     groupby align with positional indexing into the out-of-fold arrays.
     """
-    thr = cfg["clinical"]["intervention_threshold"]
+    thr = cfg["validation"]["clinical_decision_threshold"]
     aud = df[["target", "race", "age_group", "payer_code"]].copy()
     aud["race_grp"] = aud.race.fillna("Missing")
     top = aud.payer_code.value_counts().nlargest(5).index
