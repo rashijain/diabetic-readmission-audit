@@ -1,6 +1,6 @@
 pandas>=2.2
 numpy>=1.26
-scikit-learn>=1.4
+scikit-learn>=1.6          # FrozenEstimator, used by the isotonic variant
 matplotlib>=3.8
 seaborn>=0.13
 scipy>=1.11

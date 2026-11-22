@@ -1,0 +1,5 @@
+Model,ROC_AUC,PR_AUC,Brier,ECE
+Tuned HistGBDT,0.675,0.2395,0.0939,0.0059
+Untuned HistGBDT,0.6736,0.2371,0.094,0.0035
+Tuned + isotonic,0.6736,0.2196,0.0943,0.0038
+LogReg (tuned),0.6661,0.2183,0.0953,0.008
