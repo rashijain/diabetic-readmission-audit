@@ -22,9 +22,13 @@ import pandas as pd
 from scipy.stats import loguniform, randint
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
-from sklearn.frozen import FrozenEstimator
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LogisticRegression
+
+try:                                      # scikit-learn >= 1.6
+    from sklearn.frozen import FrozenEstimator
+except ImportError:                       # older releases used cv="prefit"
+    FrozenEstimator = None
 from sklearn.metrics import (average_precision_score, brier_score_loss,
                              confusion_matrix, roc_auc_score)
 from sklearn.model_selection import (GridSearchCV, GroupShuffleSplit,
@@ -248,8 +252,12 @@ def fit_final(dev: pd.DataFrame, params: dict, verbose: bool = True) -> dict:
     base = _pipe(HistGradientBoostingClassifier(**params, early_stopping=False,
                                                 random_state=SEED))
     base.fit(dev.iloc[fit_idx][cols], y[fit_idx])
-    models["Tuned + isotonic"] = CalibratedClassifierCV(
-        FrozenEstimator(base), method="isotonic").fit(dev.iloc[cal_idx][cols], y[cal_idx])
+    # scikit-learn 1.6 replaced cv="prefit" with FrozenEstimator. Support both, so a
+    # Colab runtime pinned to an older release does not fail 30 minutes into a run.
+    calibrator = (CalibratedClassifierCV(FrozenEstimator(base), method="isotonic")
+                  if FrozenEstimator is not None
+                  else CalibratedClassifierCV(base, method="isotonic", cv="prefit"))
+    models["Tuned + isotonic"] = calibrator.fit(dev.iloc[cal_idx][cols], y[cal_idx])
 
     logreg_c = json.loads(pd.read_csv(OUT / "d3_tuning_summary.csv")
                           .query("Model == 'LogisticRegression' and Stage == 'grid_search'")
