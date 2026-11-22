@@ -26,8 +26,8 @@ def build_preprocessor(regime: str, cfg=CFG):
     """Return (ColumnTransformer, feature_columns) for one missingness regime."""
     if regime not in REGIMES:
         raise ValueError(f"regime must be one of {REGIMES}, got {regime!r}")
-    miss = cfg["clinical"]["missingness_cols"]
-    min_freq = cfg["validation"]["min_category_freq"]
+    miss = cfg["data"]["mnar_cols"]
+    min_freq = cfg["data"]["min_category_freq"]
 
     num = Pipeline([("imp", SimpleImputer(strategy="median")), ("sc", StandardScaler())])
 

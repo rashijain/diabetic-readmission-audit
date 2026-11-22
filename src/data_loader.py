@@ -1,6 +1,6 @@
 """Ingestion, cohort construction and feature engineering.
 
-Clinical parameters (exclusion rules, ICD-9 grouping) live in config.yaml.
+All parameters live in config.yaml, which this module reads and never writes.
 This module applies them; it does not define them.
 """
 from __future__ import annotations
@@ -70,7 +70,7 @@ MED_COLS = ["metformin","repaglinide","nateglinide","chlorpropamide","glimepirid
 
 
 def build_cohort(raw: pd.DataFrame, cfg=CFG, verbose: bool = True) -> pd.DataFrame:
-    c = cfg["clinical"]
+    c = cfg["data"]
     df = raw.copy()
     n0 = len(df)
     df = df[~df.discharge_disposition_id.isin(c["expired_hospice_ids"])].copy()
