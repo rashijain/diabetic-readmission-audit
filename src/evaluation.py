@@ -36,6 +36,35 @@ def expected_calibration_error(y, p, n_bins=None):
     return float(err)
 
 
+def missingness_diagnostics(df, cfg=CFG) -> pd.DataFrame:
+    """Test whether missingness in the high-missingness features is informative.
+
+    For each feature, compares the 30-day readmission rate among encounters where it
+    is recorded against those where it is absent, with a chi-square test of
+    independence. A significant result means the absence of the value is itself
+    predictive, so dropping or imputing the column destroys signal.
+    """
+    from scipy.stats import chi2_contingency
+
+    rows = []
+    for column in cfg["data"]["mnar_cols"]:
+        missing = df[column].isna()
+        _, p_value, _, _ = chi2_contingency(pd.crosstab(missing, df.target))
+        measured_rate = df.loc[~missing, "target"].mean()
+        missing_rate = df.loc[missing, "target"].mean()
+        rows.append({
+            "Feature": column,
+            "Missing_pct": round(missing.mean() * 100, 2),
+            "Readmit_measured": round(measured_rate * 100, 2),
+            "Readmit_missing": round(missing_rate * 100, 2),
+            "Delta": round((missing_rate - measured_rate) * 100, 2),
+            "chi2_p": p_value,
+        })
+    out = pd.DataFrame(rows).sort_values("Missing_pct", ascending=False)
+    out.to_csv(OUT / "mnar_diagnostics.csv", index=False)
+    return out
+
+
 def run_cv(df, regime, split, cfg=CFG, verbose=True):
     """split: 'leaky_encounter' (encounter-level) or 'grouped_patient' (grouped on patient_nbr)."""
     y, groups = df.target.values, df.patient_nbr.values
@@ -124,6 +153,8 @@ def subgroup_audit(df, oof_by_regime, cfg=CFG):
 
 def main():
     df = build_cohort(load_raw())
+    print("\nMissingness diagnostics")
+    print(missingness_diagnostics(df).to_string(index=False))
     frames, oof_by_regime = [], {}
     print("\nRQ1 - leakage ablation")
     for split in ("leaky_encounter", "grouped_patient"):
