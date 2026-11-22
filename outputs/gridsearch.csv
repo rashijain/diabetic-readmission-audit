@@ -1,0 +1,13 @@
+params,mean_test_score,std_test_score
+"{'clf__learning_rate': 0.03, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 31}",0.2326350475203607,0.004259145642961198
+"{'clf__learning_rate': 0.03, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 31}",0.23251448943388411,0.004088677437477407
+"{'clf__learning_rate': 0.05, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 31}",0.2318042978981907,0.003357056667402767
+"{'clf__learning_rate': 0.05, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 31}",0.2318042978981907,0.003357056667402767
+"{'clf__learning_rate': 0.03, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 15}",0.23178803912273183,0.0026924475996073396
+"{'clf__learning_rate': 0.1, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 31}",0.23159858232907324,0.002341957020436681
+"{'clf__learning_rate': 0.1, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 31}",0.23159858232907324,0.002341957020436681
+"{'clf__learning_rate': 0.1, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 15}",0.23133705310121588,0.003117310470836342
+"{'clf__learning_rate': 0.1, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 15}",0.23133705310121588,0.003117310470836342
+"{'clf__learning_rate': 0.03, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 15}",0.23116978736445884,0.002566213675039676
+"{'clf__learning_rate': 0.05, 'clf__max_iter': 400, 'clf__max_leaf_nodes': 15}",0.230756851976299,0.0031431129955863902
+"{'clf__learning_rate': 0.05, 'clf__max_iter': 200, 'clf__max_leaf_nodes': 15}",0.230756851976299,0.0031431129955863902

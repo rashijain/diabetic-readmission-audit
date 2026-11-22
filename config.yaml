@@ -1,0 +1,45 @@
+# Central experiment configuration. Change parameters HERE, never inline in notebooks,
+# so every run is reproducible from a commit hash and every change is a reviewable diff.
+
+project:
+  name: diabetic_readmission_missingness_audit
+  random_state: 42
+
+data:
+  sources:
+    - https://archive.ics.uci.edu/static/public/296/diabetes+130+us+hospitals+for+years+1999+2008.zip
+    - https://archive.ics.uci.edu/ml/machine-learning-databases/00296/dataset_diabetes.zip
+  local_csv: data/diabetic_data.csv
+  expected_shape: [101766, 50]
+
+# --- clinical parameters (owner: Rashi Jain) -------------------------------
+clinical:
+  # Discharge dispositions meaning expired or discharged to hospice. These patients
+  # cannot be readmitted; retaining them places unreachable outcomes in the negative class.
+  expired_hospice_ids: [11, 13, 14, 19, 20, 21]
+  # Constant 'No' across all 101,766 rows -> zero variance, no information.
+  zero_variance_cols: [examide, citoglipton]
+  # Features examined for informative missingness. 'weight' is retained deliberately as a
+  # NULL CONTROL: 96.85% missing, chi-square p = 1.000. Its null result is what shows the
+  # other four reflect clinical signal rather than an artefact of high missingness.
+  missingness_cols: [weight, max_glu_serum, A1Cresult, payer_code, medical_specialty]
+  target_label: "<30"            # CMS 30-day readmission window
+  intervention_threshold: 0.15   # plausible discharge-planning capacity
+
+# --- modelling parameters (owner: Sai Teja Bandaru) ------------------------
+validation:
+  n_splits: 5
+  tuning_splits: 3
+  min_category_freq: 250         # medical_specialty has 73 levels
+  ece_bins: 10
+  scoring: average_precision     # NOT accuracy: 11.39% positive rate
+
+models:
+  logistic_regression: {C: 1.0, max_iter: 1000}
+  random_forest: {n_estimators: 150, max_depth: 12, min_samples_leaf: 20}
+  hist_gbdt: {max_iter: 200, max_depth: 8, learning_rate: 0.05, min_samples_leaf: 30}
+
+tuning_grid:
+  clf__learning_rate: [0.03, 0.05, 0.10]
+  clf__max_iter: [200, 400]
+  clf__max_leaf_nodes: [15, 31]
