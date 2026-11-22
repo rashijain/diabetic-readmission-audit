@@ -71,5 +71,5 @@ Preprocessing was worth roughly seven times more than model configuration here.
 ## 4. Refactor
 
 The notebook is reorganised into `src/` modules with parameters lifted into `config.yaml`,
-split into a clinical block and a modelling block so ownership is explicit and any change
-is a reviewable diff rather than an inline edit. The notebook remains as the Colab runner.
+split into a clinical block and a modelling block, so any change is a reviewable diff
+rather than an inline edit. The notebook remains as the Colab runner.

@@ -47,7 +47,7 @@ and figure in the report regenerates from committed code with no manual editing.
 ## Layout
 
 ```
-config.yaml                 experiment parameters, split by owner
+config.yaml                 experiment parameters (clinical and modelling blocks)
 src/data_loader.py          ingestion, cohort construction, feature engineering
 src/preprocessing.py        the three missingness regimes as leakage-safe Pipelines
 src/evaluation.py           leakage ablation, regime comparison, tuning, subgroup audit
@@ -55,14 +55,6 @@ src/visualization.py        figure generation
 notebooks/                  Colab runner
 outputs/                    generated tables (.csv) and figures (.png)
 ```
-
-## Division of work
-
-- **Rashi Jain** — clinical framing, cohort exclusion rules, ICD-9 grouping, interpretation
-  of the missingness diagnostics, deployment constraints.
-- **Sai Teja Bandaru** — ingestion and parsing, leakage-safe pipeline architecture,
-  validation design and ablation, model comparison and tuning, repository setup.
-- **Joint** — research questions, subgroup audit design, written report.
 
 ## Notes on the data
 

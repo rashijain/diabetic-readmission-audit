@@ -12,7 +12,7 @@ data:
   local_csv: data/diabetic_data.csv
   expected_shape: [101766, 50]
 
-# --- clinical parameters (owner: Rashi Jain) -------------------------------
+# --- clinical parameters ---------------------------------------------------
 clinical:
   # Discharge dispositions meaning expired or discharged to hospice. These patients
   # cannot be readmitted; retaining them places unreachable outcomes in the negative class.
@@ -26,7 +26,7 @@ clinical:
   target_label: "<30"            # CMS 30-day readmission window
   intervention_threshold: 0.15   # plausible discharge-planning capacity
 
-# --- modelling parameters (owner: Sai Teja Bandaru) ------------------------
+# --- modelling parameters --------------------------------------------------
 validation:
   n_splits: 5
   tuning_splits: 3

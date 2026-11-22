@@ -1,7 +1,7 @@
 """Ingestion, cohort construction and feature engineering.
 
-Clinical parameters (exclusion rules, ICD-9 grouping) are owned by Rashi Jain and
-live in config.yaml. This module applies them; it does not define them.
+Clinical parameters (exclusion rules, ICD-9 grouping) live in config.yaml.
+This module applies them; it does not define them.
 """
 from __future__ import annotations
 import io, zipfile, urllib.request
