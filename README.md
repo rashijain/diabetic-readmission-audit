@@ -1,5 +1,7 @@
 # Diabetic Readmission: Informative Missingness, Patient-Level Leakage, and Subgroup Equity
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rashijain/diabetic-readmission-audit/blob/main/notebooks/ResidencyProject.ipynb)
+
 PhDAI 733 team project — Deliverable 2.
 **Authors:** Sai Teja Bandaru, Rashi Jain
 
