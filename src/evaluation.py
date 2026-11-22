@@ -17,10 +17,14 @@ OUT = ROOT / "outputs"; OUT.mkdir(exist_ok=True)
 
 
 def get_models(cfg=CFG):
+    """Instantiate the three candidates. Every hyperparameter except the seed
+    comes from config.yaml — do not repeat one as an explicit keyword here, or
+    the ** unpack and the keyword collide with a TypeError.
+    """
     m = cfg["models"]
     return {
         "LogisticRegression": LogisticRegression(**m["logistic_regression"], random_state=SEED),
-        "RandomForest":       RandomForestClassifier(**m["random_forest"], n_jobs=-1, random_state=SEED),
+        "RandomForest":       RandomForestClassifier(**m["random_forest"], random_state=SEED),
         "HistGBDT":           HistGradientBoostingClassifier(**m["hist_gbdt"], random_state=SEED),
     }
 
@@ -113,6 +117,11 @@ def tune(df, regime="explicit_mnar", cfg=CFG):
                         ("clf", HistGradientBoostingClassifier(**cfg["models"]["hist_gbdt"], random_state=SEED))])
     base = cross_val_score(untuned, df[cols], y, groups=groups, cv=cv,
                            scoring=cfg["validation"]["scoring"]).mean()
+    results = (pd.DataFrame(gs.cv_results_)[["params", "mean_test_score", "std_test_score"]]
+                 .sort_values("mean_test_score", ascending=False)
+                 .reset_index(drop=True))
+    results.to_csv(OUT / "gridsearch.csv", index=False)
+
     print(f"best {gs.best_params_}")
     print(f"tuned {gs.best_score_:.4f} vs untuned {base:.4f} -> delta {gs.best_score_-base:+.4f}")
     return gs, base
