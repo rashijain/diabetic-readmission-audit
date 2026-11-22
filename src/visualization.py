@@ -11,8 +11,6 @@ from __future__ import annotations
 import pickle
 
 import matplotlib
-matplotlib.use("Agg")                       # no display in CI or a headless shell
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -198,6 +196,9 @@ def plot_decision_curve(y_true: np.ndarray, oof_by_regime: dict) -> None:
 
 
 def main() -> None:
+    # Only force a headless backend for the script entry point; importing this
+    # module from a notebook must leave the inline backend alone.
+    matplotlib.use("Agg")
     sns.set_theme(style="whitegrid", context="notebook")
     OUT.mkdir(exist_ok=True)
 
